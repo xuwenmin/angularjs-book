@@ -28,10 +28,7 @@
   content: "";
   padding: 0;
 }
-input[type=checkbox]{
-  width: 25px;
-  height: 25px;
-}
+
 .green{ color: green;line-height: 25px;font-size: 20px;}
 .error{ color:red;line-height: 25px;font-size: 20px;}
 .expander {

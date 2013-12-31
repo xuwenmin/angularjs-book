@@ -1,5 +1,10 @@
 <p>This is the partial for view 1.</p>
-<p>{{name}}</p>
+<p bindonce>
+	<input type="text" bo-text="desc">
+</p>
+<p>
+	<button ng-click="test()">调用</button>
+</p>
 <p>
 	<input type="checkbox" ng-model="isshow" >:是否显示
 </p>
