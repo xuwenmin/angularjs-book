@@ -24,4 +24,8 @@ config(['$routeProvider', 'service3Provider','$provide',function($routeProvider,
       }
       return $delegate;
   });
+}]).
+//$location 服务是来控制路由的
+run(['$rootScope','$location',function($rootScope,$location){
+  $location.path('/view2');
 }]);

@@ -11,6 +11,33 @@ directive('appVersion', ['version',
     };
   }
 ]).
+directive('showmsgdemo',[function(){
+   return {
+       restrict: 'EA',
+       replace: true,
+       templateUrl:'showmsg.html'
+    }
+}]).
+directive('showmsg',[function(){
+     return {
+         restrict: 'EA',
+         replace: true,
+         templateUrl:'tmpl/a.html'
+     }
+}]).
+directive('crmAdd',['$window','$compile',function($window,$compile){
+  var _html='<showmsg></showmsg><showmsgdemo></showmsgdemo>';
+  return {
+    link:function(scope,elem,attrs){
+        elem.bind("click",function(e){
+            elem.parent().find("p").remove();
+            elem.parent().append(_html);
+            $compile(elem.parent())(scope);
+            scope.$apply();
+        });
+    }
+  }
+}]).
 directive('tab', function() {
   return {
     restrict: 'EA',
@@ -46,9 +73,9 @@ directive('expander', function() {
         scope.showMe = false;
         tabController.addExpander(scope);
         scope.toggle = function toggle() {
-        scope.showMe = !scope.showMe;
-        tabController.gotOpened(scope);
-      }
+          scope.showMe = !scope.showMe;
+          tabController.gotOpened(scope);
+        }
     }
   };
 });

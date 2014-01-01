@@ -16,7 +16,7 @@ factory('service1', function() {
 	var _getabc = function() {
 		return _abc;
 	}
-	console.log("invoke service1...........");
+	// console.log("invoke service1...........");
 	return {
 		v: 'test',
 		getabc: _getabc
@@ -26,7 +26,7 @@ factory('service1', function() {
 service('service2', function() {
 	var thisIsPrivate = "Private";
 	this.v = "This is public";
-	console.log("invoke service2...........");
+	// console.log("invoke service2...........");
 	this.getPrivate = function() {
 		return thisIsPrivate;
 	};
@@ -39,7 +39,7 @@ provider('service3',function(){
 			_str=str;
 		},
 		$get:function(){
-			console.log("invoke service3...........");
+			// console.log("invoke service3...........");
 			var _getstr=function(){
 				return _str;
 			};
