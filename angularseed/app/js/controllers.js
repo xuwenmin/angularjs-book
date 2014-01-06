@@ -3,11 +3,13 @@
 /* Controllers */
 
 angular.module('myApp.controllers', []).
-controller('Main',['$scope',function($scope){
-   $scope.$on('$viewContentLoaded',function(){
+controller('Main', ['$scope',
+  function($scope) {
+    $scope.$on('$viewContentLoaded', function() {
       // console.log("Main-------viewContentLoaded..........");
-   });
-}]).
+    });
+  }
+]).
 controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3', '$window',
   function($scope, utilconfig, service1, service2, service3, $window) {
     $scope.constant = utilconfig.xuwm; //从constant中定义的常量服务中去取属性
@@ -32,7 +34,7 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
     }];
 
     $scope.$on("demo.add", function() {
-       console.log("parent.event.invoke.........");
+      console.log("parent.event.invoke.........");
     });
 
     // $scope.$broadcast是为了触发子节点设置的事件
@@ -42,8 +44,8 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
   .controller('Xuwm', ['$scope', '$window',
     function($scope, $window) {
 
-      $scope.$on('demo.add',function(){
-         console.log('child.event.invoke........');
+      $scope.$on('demo.add', function() {
+        console.log('child.event.invoke........');
       });
       // $scope.$emit是为了触发父节点设置的事件以及本身内设置的事件
       $scope.emitevent = function() {
@@ -53,8 +55,8 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
       }
     }
   ])
-  .controller('MyCtrl2', ['$scope',
-    function($scope) {
+  .controller('MyCtrl2', ['$scope','$q','$timeout',
+    function($scope,$q,$timeout) {
       //监控desc 属性，下面是不管输入什么，都只显示aaa
       var watch_desc = $scope.$watch("desc", function(newval, oldval, scope) {
         // console.log(newval);
@@ -103,7 +105,77 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
       }
 
       $scope.test3 = function(num) {
-         return num.name+" " +num.desc;
+        return num.name + " " + num.desc;
       }
+
+      // promise demo start---------------------
+      var okToGreet=function(name){
+          return true;
+      }
+      function asyncGreet(name) {
+        var deferred = $q.defer();
+        setTimeout(function() {
+          // since this fn executes async in a future turn of the event loop, we need to wrap
+          // our code into an $apply call so that the model changes are properly observed.
+            $scope.$apply(function() {
+              deferred.notify('About to greet ' + name + '.');
+              if (okToGreet(name)) {
+                deferred.resolve('Hello, ' + name + '!');
+              } else {
+                deferred.reject('Greeting ' + name + ' is not allowed.');
+              }
+            });
+          }, 1000);
+        return deferred.promise;
+      }
+       function asyncGreet_B(name) {
+        var deferred = $q.defer();
+        setTimeout(function() {
+          // since this fn executes async in a future turn of the event loop, we need to wrap
+          // our code into an $apply call so that the model changes are properly observed.
+            $scope.$apply(function() {
+              deferred.notify('B ---About to greet ' + name + '.');
+              if (okToGreet(name)) {
+                deferred.resolve('Hello, ' + name + '!');
+              } else {
+                deferred.reject('Greeting ' + name + ' is not allowed.');
+              }
+            });
+          }, 2000);
+        return deferred.promise;
+      }
+      $scope.test4=function(){
+        var promise = asyncGreet('Robin Hood');
+        var promiseB= promise.then(function(greeting) {
+            return asyncGreet_B(greeting+'admin');
+         },function(resson){
+            return resson;
+         },function(update){
+            console.log(update);
+            return update;
+         });
+        promiseB.then(function(greeting) {
+            alert('Success: ' + greeting);
+          }, function(reason) {
+            alert('Failed: ' + reason);
+          }, function(update) {
+            alert('Got notification: ' + update);
+        });
+      };
+
+      $scope.test5=function(){
+          var promise=$timeout(function(){
+              console.log("fsdfsdfsdf");
+              return "xuwm";
+          },3000);
+          promise.then(function(msg){
+            console.log(msg);
+            // $timeout.cancel(promise);
+          });
+
+      }
+     
+     // promise demo end---------------------
+
     }
   ]);
