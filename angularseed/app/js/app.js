@@ -12,7 +12,12 @@ angular.module('myApp', [
   'pasvaz.bindonce' 
 ]).
 config(['$routeProvider', 'service3Provider','$provide',function($routeProvider,service3Provider,$provide) {
-  $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
+
+  $routeProvider.when('/view1', 
+    {
+       templateUrl: 'partials/partial1.html',
+       controller: 'MyCtrl1'
+     });
   $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
   $routeProvider.otherwise({redirectTo: '/view1'});
   service3Provider.setstr("app config str !"); //只有用provider来定义的服务才能在config里进行调用
@@ -26,6 +31,14 @@ config(['$routeProvider', 'service3Provider','$provide',function($routeProvider,
   });
 }]).
 //$location 服务是来控制路由的
-run(['$rootScope','$location',function($rootScope,$location){
+run(['$rootScope','$location','$window',function($rootScope,$location,$window){
+  $rootScope.isshow=false;
   $location.path('/view2');
+  $rootScope.$on('$routeChangeStart',function(){
+      $rootScope.isshow=true;
+  });
+  $rootScope.$on('$viewContentLoaded',function(){
+     // $window.alert("end........");
+      $rootScope.isshow=false; 
+  });
 }]);

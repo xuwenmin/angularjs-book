@@ -3,14 +3,18 @@
 <head>
   <meta charset="utf-8">
   <title>My AngularJS App</title>
+  <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/app.css"/>
 </head>
-<body>
+<body ng-controller="Main">
+  <div class="load-msg" ng-show="isshow">
+     <img src="img/loading.gif" alt="">
+  </div>
   <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
+    <li><a when-active href="#/view1">view1</a></li>
+    <li><a when-active href="#/view2">view2</a></li>
   </ul>
-
+ 
   <div ng-view></div>
 
   <div>Angular seed app: v<span app-version></span></div>
