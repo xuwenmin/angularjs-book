@@ -11,63 +11,72 @@ directive('appVersion', ['version',
     };
   }
 ]).
-directive('showmsgdemo',[function(){
-   return {
-       restrict: 'EA',
-       replace: true,
-       templateUrl:'showmsg.html'
-    }
-}]).
-directive('showmsg',[function(){
-     return {
-         restrict: 'EA',
-         replace: true,
-         templateUrl:'tmpl/a.html'
-     }
-}]).
-directive('crmAdd',['$window','$compile',function($window,$compile){
-  var _html='<showmsg></showmsg><showmsgdemo></showmsgdemo>';
-  return {
-    link:function(scope,elem,attrs){
-        elem.bind("click",function(e){
-            elem.parent().find("p").remove();
-            elem.parent().append(_html);
-            $compile(elem.parent())(scope);
-            scope.$apply();
-        });
+directive('showmsgdemo', [
+
+  function() {
+    return {
+      restrict: 'EA',
+      replace: true,
+      templateUrl: 'showmsg.html'
     }
   }
-}]).
-directive('whenActive',function($location){
-   return {
-       scope: true,
-       link: function (scope, element, attrs ) {
-           scope.$on('$routeChangeSuccess', function () {
-            var cur="#"+$location.path();
-               if ( cur == element.attr( 'href' ) ) {
-                   element.addClass( 'active' );
-               }
-               else {
-                   element.removeClass( 'active' );
-               }
-           });
-       }
-   }
+]).
+directive('showmsg', [
+
+  function() {
+    return {
+      restrict: 'EA',
+      replace: true,
+      templateUrl: 'tmpl/a.html'
+    }
+  }
+]).
+directive('crmAdd', ['$window', '$compile',
+  function($window, $compile) {
+    var _html = '<showmsg></showmsg><showmsgdemo></showmsgdemo>';
+    return {
+      link: function(scope, elem, attrs) {
+        elem.bind("click", function(e) {
+          elem.parent().find("p").remove();
+          elem.parent().append(_html);
+          $compile(elem.parent())(scope);
+          scope.$apply();
+        });
+      }
+    }
+  }
+]).
+directive('whenActive', function($location) {
+  return {
+    scope: true,
+    link: function(scope, element, attrs) {
+      scope.$on('$routeChangeSuccess', function() {
+        var cur = "#" + $location.path();
+        if (cur == element.attr('href')) {
+          element.addClass('active');
+        } else {
+          element.removeClass('active');
+        }
+      });
+    }
+  }
 }).
-directive('getter', function($parse){
-  var link = function($scope, $element, $attrs, $ctrl){
-     var func = $parse($attrs['getter']);
-     $scope.$watch(function(){
-        $element.val(func($scope));
-     });
+directive('getter', function($parse) {
+  var link = function($scope, $element, $attrs, $ctrl) {
+    var func = $parse($attrs['getter']);
+    $scope.$watch(function() {
+      $element.val(func($scope));
+    });
   }
   return link;
 }).
-directive('setter', function($parse){
-  var link = function($scope, $element, $attrs, $ctrl){
+directive('setter', function($parse) {
+  var link = function($scope, $element, $attrs, $ctrl) {
     var func = $parse($attrs['setter']);
-    $element.on('change', function(eventObj){
-      func($scope, {$element: $element});
+    $element.on('change', function(eventObj) {
+      func($scope, {
+        $element: $element
+      });
       $scope.$digest();
     });
   }
@@ -79,7 +88,7 @@ directive('tab', function() {
     replace: true,
     transclude: true,
     template: '<div ng-transclude></div>',
-    controller: function($scope,$element,$attrs,$transclude) {
+    controller: function($scope, $element, $attrs, $transclude) {
       var expanders = [];
       this.gotOpened = function(selectedExpander) {
         angular.forEach(expanders, function(expander) {
@@ -105,13 +114,54 @@ directive('expander', function() {
     transclude: true,
     require: '^?tab',
     link: function(scope, element, attrs, tabController) {
-        // console.log(tabController);
-        scope.showMe = false;
-        tabController.addExpander(scope);
-        scope.toggle = function toggle() {
-          scope.showMe = !scope.showMe;
-          tabController.gotOpened(scope);
-        }
+      // console.log(tabController);
+      console.log(element);
+      scope.showMe = false;
+      // console.log(tabController);
+      tabController.addExpander(scope);
+      scope.toggle = function toggle() {
+        scope.showMe = !scope.showMe;
+        tabController.gotOpened(scope);
+      }
     }
   };
-});
+})
+  .directive('smartInteger', function() {
+    var INTEGER_REGEXP = /^\-?\d*$/;
+    return {
+      require: 'ngModel',
+      link: function(scope, elm, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(viewValue) {
+          console.log('fsdfsdf');
+          if (INTEGER_REGEXP.test(viewValue)) {
+            // it is valid
+            ctrl.$setValidity('integer', true);
+
+            return viewValue;
+          } else {
+            // it is invalid, return undefined (no model update)
+            ctrl.$setValidity('integer', false);
+            return undefined;
+          }
+        });
+      }
+    };
+  })
+  .directive('smartFloat', function() {
+    var FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/;
+    return {
+      require: 'ngModel',
+      link: function(scope, elm, attrs, ctrl) {
+        ctrl.$parsers.unshift(function(viewValue) {
+          console.log('admin');
+          if (FLOAT_REGEXP.test(viewValue)) {
+            ctrl.$setValidity('float', true);
+            return parseFloat(viewValue.replace(',', '.'));
+          } else {
+            ctrl.$setValidity('float', false);
+            return undefined;
+          }
+        });
+      }
+    };
+  });

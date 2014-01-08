@@ -55,8 +55,34 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
       }
     }
   ])
-  .controller('MyCtrl2', ['$scope','$q','$timeout',
-    function($scope,$q,$timeout) {
+  .controller('Controller', ['$scope',
+    function($scope) {
+      $scope.master = {};
+      $scope.update = function(user) {
+        $scope.master = angular.copy(user);
+      };
+      $scope.reset = function() {
+        $scope.user = angular.copy($scope.master);
+      };
+      $scope.isUnchanged = function(user) {
+        return angular.equals(user, $scope.master);
+      };
+      $scope.reset();
+    }
+  ])
+  .controller('MyCtrl2', ['$scope', '$q', '$timeout', '$location',
+    function($scope, $q, $timeout, $location) {
+
+      /* console.log($location.path());
+      console.log($location.search());
+      console.log($location.hash());
+      console.log($location.absUrl());
+      console.log($location.url());
+      console.log($location.host());
+      console.log($location.port());
+      console.log($location.protocol());*/
+
+      $scope.desc = "this is a tewt1";
       //监控desc 属性，下面是不管输入什么，都只显示aaa
       var watch_desc = $scope.$watch("desc", function(newval, oldval, scope) {
         // console.log(newval);
@@ -109,14 +135,15 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
       }
 
       // promise demo start---------------------
-      var okToGreet=function(name){
-          return true;
+      var okToGreet = function(name) {
+        return true;
       }
-      function asyncGreet(name) {
-        var deferred = $q.defer();
-        setTimeout(function() {
-          // since this fn executes async in a future turn of the event loop, we need to wrap
-          // our code into an $apply call so that the model changes are properly observed.
+
+        function asyncGreet(name) {
+          var deferred = $q.defer();
+          setTimeout(function() {
+            // since this fn executes async in a future turn of the event loop, we need to wrap
+            // our code into an $apply call so that the model changes are properly observed.
             $scope.$apply(function() {
               deferred.notify('About to greet ' + name + '.');
               if (okToGreet(name)) {
@@ -126,13 +153,14 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
               }
             });
           }, 1000);
-        return deferred.promise;
-      }
-       function asyncGreet_B(name) {
-        var deferred = $q.defer();
-        setTimeout(function() {
-          // since this fn executes async in a future turn of the event loop, we need to wrap
-          // our code into an $apply call so that the model changes are properly observed.
+          return deferred.promise;
+        }
+
+        function asyncGreet_B(name) {
+          var deferred = $q.defer();
+          setTimeout(function() {
+            // since this fn executes async in a future turn of the event loop, we need to wrap
+            // our code into an $apply call so that the model changes are properly observed.
             $scope.$apply(function() {
               deferred.notify('B ---About to greet ' + name + '.');
               if (okToGreet(name)) {
@@ -142,40 +170,40 @@ controller('MyCtrl1', ["$scope", "utilconfig", 'service1', 'service2', 'service3
               }
             });
           }, 2000);
-        return deferred.promise;
-      }
-      $scope.test4=function(){
+          return deferred.promise;
+        }
+      $scope.test4 = function() {
         var promise = asyncGreet('Robin Hood');
-        var promiseB= promise.then(function(greeting) {
-            return asyncGreet_B(greeting+'admin');
-         },function(resson){
-            return resson;
-         },function(update){
-            console.log(update);
-            return update;
-         });
+        var promiseB = promise.then(function(greeting) {
+          return asyncGreet_B(greeting + 'admin');
+        }, function(resson) {
+          return resson;
+        }, function(update) {
+          console.log(update);
+          return update;
+        });
         promiseB.then(function(greeting) {
-            alert('Success: ' + greeting);
-          }, function(reason) {
-            alert('Failed: ' + reason);
-          }, function(update) {
-            alert('Got notification: ' + update);
+          alert('Success: ' + greeting);
+        }, function(reason) {
+          alert('Failed: ' + reason);
+        }, function(update) {
+          alert('Got notification: ' + update);
         });
       };
 
-      $scope.test5=function(){
-          var promise=$timeout(function(){
-              console.log("fsdfsdfsdf");
-              return "xuwm";
-          },3000);
-          promise.then(function(msg){
-            console.log(msg);
-            // $timeout.cancel(promise);
-          });
+      $scope.test5 = function() {
+        var promise = $timeout(function() {
+          console.log("fsdfsdfsdf");
+          return "xuwm";
+        }, 3000);
+        promise.then(function(msg) {
+          console.log(msg);
+          // $timeout.cancel(promise);
+        });
 
       }
-     
-     // promise demo end---------------------
+
+      // promise demo end---------------------
 
     }
   ]);

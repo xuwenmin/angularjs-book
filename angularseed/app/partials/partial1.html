@@ -17,6 +17,9 @@
 <p ng-hide="isshow" class="error">
 	if isshow is false ,that is show!
 </p>
+<p ng-repeat="expander in expanders">
+	{{expander.title}}:{{expander.text}}
+</p>
 <tab>
 	<expander class='expander' ng-repeat="expander in expanders" expander-title='expander.title' abc="x">
       {{expander.text}}
@@ -31,4 +34,24 @@
 	<p>
 		<button ng-click="emitevent()">事件测试</button>
 	</p>
+</div>
+
+<div ng-controller="Controller">
+	<form name="form" class="css-form" novalidate>
+		<div>
+			Size (integer 0 - 10):
+			<input type="number" ng-model="size" name="size"
+			min="0" max="10" smart-integer />{{size}}<br />
+			<span ng-show="form.size.$error.integer">This is not valid integer!</span>
+			<span ng-show="form.size.$error.min || form.size.$error.max">
+			The value must be in range 0 to 10!</span>
+			</div>
+			<div>
+			Length (float):
+			<input type="text" ng-model="length" name="length" smart-float />
+			{{length}}<br />
+			<span ng-show="form.length.$error.float">
+			This is not a valid float number!</span>
+		</div>
+	</form>
 </div>

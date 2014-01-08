@@ -1,5 +1,5 @@
 <p>This is the partial for view 2.</p>
-<p>{{desc}}</p>
+<p>{{desc | allfilter:true}}</p>
 <p>
   Showing of 'interpolate' filter:
   {{ 'Current version is v%VERSION%.' | interpolate }}
@@ -37,3 +37,4 @@
 		<p><input type="text" getter="test3(num)"  setter="test2(num,$element)" ></p>
 	</li>
 </ul>
+
