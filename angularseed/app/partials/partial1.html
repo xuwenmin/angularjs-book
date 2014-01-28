@@ -1,57 +1,14 @@
-<p>This is the partial for view 1.</p>
-<p bindonce>
-	<input type="text" bo-text="desc">
-	<span>
-		service测试:[{{constant}}:{{service1_v}}:{{service2_v}}:{{service3_v}}]
-	</span>
+<p>
+
+    {{"this is a test $0" | format:userName }}
+
 </p>
 <p>
-	<button ng-click="test()">调用</button>
+	<input type="text" ng-model="userName" ui-event="{ focus: 'showFocus($event)' , click: 'showMsg()' }"  />
+	<input type="text" ng-model="userPwd"  />
+
 </p>
+
 <p>
-	<input type="checkbox" ng-model="isshow" >:是否显示
+    {{"this user info is :age ,:gender, :age " | format:user }}
 </p>
-<p ng-show="isshow" class="green">
-	if isshow is true ,that is show!
-</p>
-<p ng-hide="isshow" class="error">
-	if isshow is false ,that is show!
-</p>
-<p ng-repeat="expander in expanders">
-	{{expander.title}}:{{expander.text}}
-</p>
-<tab>
-	<expander class='expander' ng-repeat="expander in expanders" expander-title='expander.title' abc="x">
-      {{expander.text}}
-	</expander>
-</tab>
-<div class="abc">
-    <button crm-add >添加内容</button>
-</div>
-
-<div class="main" ng-controller="Xuwm">
-	<p>{{abc}}</p>
-	<p>
-		<button ng-click="emitevent()">事件测试</button>
-	</p>
-</div>
-
-<div ng-controller="Controller">
-	<form name="form" class="css-form" novalidate>
-		<div>
-			Size (integer 0 - 10):
-			<input type="number" ng-model="size" name="size"
-			min="0" max="10" smart-integer />{{size}}<br />
-			<span ng-show="form.size.$error.integer">This is not valid integer!</span>
-			<span ng-show="form.size.$error.min || form.size.$error.max">
-			The value must be in range 0 to 10!</span>
-			</div>
-			<div>
-			Length (float):
-			<input type="text" ng-model="length" name="length" smart-float />
-			{{length}}<br />
-			<span ng-show="form.length.$error.float">
-			This is not a valid float number!</span>
-		</div>
-	</form>
-</div>

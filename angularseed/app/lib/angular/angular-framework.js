@@ -3092,6 +3092,9 @@
 			element.removeClass(DIRTY_CLASS).addClass(PRISTINE_CLASS), form.$dirty = !1, form.$pristine = !0, forEach(controls, function(control) {
 				control.$setPristine()
 			})
+		},
+		form.$getControllers = function(){
+			return controls;
 		}
 	}
 
@@ -4289,7 +4292,11 @@
 					$error[validationErrorKey] !== !isValid && (isValid ? ($error[validationErrorKey] && invalidCount--, invalidCount || (toggleValidCss(!0), this.$valid = !0, this.$invalid = !1)) : (toggleValidCss(!1), this.$invalid = !0, this.$valid = !1, invalidCount++), $error[validationErrorKey] = !isValid, toggleValidCss(isValid, validationErrorKey), parentForm.$setValidity(validationErrorKey, isValid, this))
 				}, this.$setPristine = function() {
 					this.$dirty = !1, this.$pristine = !0, $element.removeClass(DIRTY_CLASS).addClass(PRISTINE_CLASS)
-				}, this.$setViewValue = function(value) {
+				},this.$reset = function(){
+					this.$setPristine(),this.$viewValue = Number.NaN, this.$modelValue = Number.NaN,  this.$pristine = !0, this.$dirty = !1, this.$valid = !0, this.$invalid = !1, this.$name = $attr.name,
+					$error = this.$error = {},invalidCount = 0;
+				},
+				 this.$setViewValue = function(value) {
 					this.$viewValue = value, this.$pristine && (this.$dirty = !0, this.$pristine = !1, $element.removeClass(PRISTINE_CLASS).addClass(DIRTY_CLASS), parentForm.$setDirty()), forEach(this.$parsers, function(fn) {
 						value = fn(value)
 					}), this.$modelValue !== value && (this.$modelValue = value, ngModelSet($scope, value), forEach(this.$viewChangeListeners, function(listener) {

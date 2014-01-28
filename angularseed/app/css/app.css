@@ -1,5 +1,8 @@
 /* app css stylesheet */
 
+*{
+  margin: 0;padding: 0;
+}
 .menu {
   list-style: none;
   border-bottom: 0.1em solid black;
@@ -70,3 +73,50 @@ background-color: #FA787E;
 .css-form input.ng-valid.ng-dirty {
 background-color: #78FA89;
 }
+
+/*分页样式----------------start-------------------------------*/
+
+.pagecontent{
+  position: relative;
+  overflow: hidden;
+  margin: 10px;
+}
+.pagecontent ul{ list-style: none;font-size: 0;}
+.pagecontent ul>li{ 
+  display: inline-block;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-left: none;
+}
+.pagecontent ul>li:first-child{
+  border-left: 1px solid #ddd;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 1px solid #ddd;
+}
+.pagecontent ul>li:last-child{
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.pagecontent ul>li>a{ 
+  color: #428bca;
+  display: inline-block;
+  text-align: center;
+  font-size: 15px;
+  padding: 2px 10px;
+  background-color: #fff;
+  text-decoration: none;
+  cursor:pointer;
+}
+.pagecontent ul>li.active{
+  background-color: #428bca;
+}
+.pagecontent ul>li.disabled a{
+  color: #bbb; 
+  cursor: default;
+}
+.pagecontent ul>li.active a{
+  background-color: #428bca;
+  color: white;
+}
+/*分页样式----------------end-------------------------------*/

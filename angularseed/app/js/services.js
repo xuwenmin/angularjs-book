@@ -51,3 +51,6 @@ provider('service3',function(){
 	}
 }).
 value('version', '0.1');
+
+/*var injector=angular.injector('myApp.services');
+console.log(injector.get('service1'));*/
