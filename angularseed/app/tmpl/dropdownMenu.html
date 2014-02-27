@@ -1,0 +1,10 @@
+<div class="btn-group">
+  <button ng-click="showMenu('',$event)" type="button" class="btn btn-primary btn-sm dropdown-toggle">
+    {{ dropdownData.title }} <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" >
+    <li ng-repeat="item in dropdownData.data" ng-click="action(item)">
+        <a>{{item.v}}</a>
+    </li>
+  </ul>
+</div>

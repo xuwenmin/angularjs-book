@@ -1,0 +1,29 @@
+ <div class="btn-group">
+    <button  type="button" class="btn btn-success btn-xs dropdown-toggle" ng-click="show($event)">
+    一键回复 <span class="caret" style="color:white;"></span>
+    </button>
+    <div class="reply-content" ng-show="showList" ng-click="stopPropagation($event)">
+        <div class="triangle"></div>
+        <div class="reply-title">
+            <label for="account">发布账号:</label>
+            <select name="account">
+                <option value="1">锤子科技产品部</option>
+            </select>
+            <button class="close tx_close" type="button" ng-click="close($event)">×</button>
+        </div>
+       <ul class="reply-list">         
+            <li ng-class="{ action: item.isExpand }" ng-repeat="item in replyData">   
+             <p class="tx_open" ng-click="expand($index,$event)">
+                <span class="img" ></span>{{ item.title }}</p>
+                    <ul ng-show="item.isExpand"> 
+                           <li ng-repeat="list in item.list">
+                               <a  ng-if="item.list.length" href="javascript:void(0)" title="{{ list.v }}">{{ list.v }}</a>
+                           </li>  
+                           <li ng-if="!item.list.length" ng-class="{ nocontent:!item.list.length}">
+                               <span>此分组下没有配置回复范本</span>
+                           </li>
+                    </ul> 
+            </li> 
+        </ul>
+    </div>
+</div>

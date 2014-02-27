@@ -40,7 +40,7 @@
 
 	function sortedKeys(obj) {
 		var keys = [];
-		for (var key in obj) obj.hasOwnProperty(key) && keys.push(key);
+		for (var key in obj) obj.hasOwnProperty(key) && keys.psh(key);
 		return keys.sort()
 	}
 

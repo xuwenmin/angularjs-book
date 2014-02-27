@@ -1,14 +1,65 @@
-<p>
-
-    {{"this is a test $0" | format:userName }}
-
-</p>
-<p>
-	<input type="text" ng-model="userName" ui-event="{ focus: 'showFocus($event)' , click: 'showMsg()' }"  />
-	<input type="text" ng-model="userPwd"  />
-
+<p data-name="xuwm">
+    {{ userName }}
 </p>
 
 <p>
-    {{"this user info is :age ,:gender, :age " | format:user }}
+    <input type="text" ng-model="userName"  >
 </p>
+<p>
+    <input type="text" ng-value="userName" app-version data-id="123" >
+</p>
+<p>
+    <input type="text" ng-model="exp" />
+</p>
+
+<p>{{parseValue}}</p>
+
+<p>{{today | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+
+<p>
+    <input type="text" demo-directive ng-model="abc" />
+    {{abc}}
+</p>
+
+<div class="container">
+    <div class="row" style="border:1px solid #ccc;">
+         <div class="col-md-4" style="background-color:#e3e3e3;">
+             <a ng-click="orderPara = 'name'; ">name</a>
+             (<a ng-click="orderPara = '-name'; ">ˇ</a>)
+         </div>
+         <div class="col-md-4" style="background-color:#e3e3e3;">
+             <a ng-click="orderPara = 'id'; " >id</a>
+             (<a ng-click="orderPara = '-id'; ">ˇ</a>)
+         </div>
+         <div class="col-md-4" style="background-color:#e3e3e3;">
+             <a ng-click="orderPara = 'age'; " >age</a>
+             (<a ng-click="orderPara = '-age'; ">ˇ</a>)
+         </div>
+    </div>
+    <div class="row" ng-repeat="item in sortLists | orderBy:orderPara " style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;border-right:1px solid #ccc;" >
+         <div class="col-md-4">
+             <a >{{ item.name }}</a>
+         </div>
+         <div class="col-md-4">
+             <a >{{ item.id }}</a>
+         </div>
+         <div class="col-md-4">
+             <a >{{ item.age }}</a>
+         </div>
+    </div>
+</div>
+
+
+<p>
+    <button  ng-click="clickDemo($event)">按钮</button>
+
+</p>
+<!-- 下拉按钮控件 -->
+<div dropdown-menu dropdown-data="dropdownData" dropdown-call-back="dropdownFn" ></div>
+<div dropdown-menu dropdown-data="dropdownData" dropdown-call-back="dropdownFn" ></div>
+
+<div reply reply-data="replyList"></div>
+
+<textarea auto-textarea name="info"  class="textarea-m" auto-para="textareaPara">
+    
+</textarea>

@@ -7,28 +7,150 @@ angular.module('myApp.directives', []).
 directive('appVersion', ['version',
   function(version) {
     return function(scope, elm, attrs) {
-      elm.text(version);
+
+
+        var injector = elm.injector();
+        // console.log(elm.inheritedData());
+        elm.text(version) && elm.val(version);
+
     };
   }
 ]).
-directive('showmsgdemo', [
+directive('demoDirective', [function(){
+  return {
+    require: 'ngModel',
+    link: function(scope, elm, attrs, c){
+        c.$parsers.unshift(function(viewValue){
+            return viewValue;
+        });
 
-  function() {
-    return {
-      restrict: 'EA',
-      replace: true,
-      templateUrl: 'showmsg.html'
+        c.$formatters.unshift(function(v){
+            if(!v) return '';
+            return v + '-format' ;
+        });
     }
   }
+}]).
+directive('autoTextarea', function(){
+    return {
+        restrict: 'EA',
+        scope: {
+            autoPara: '='
+        },
+        link: function(scope, elm, attrs){
+            var defaults={
+                maxHeight: null,
+                minHeight: elm.height()
+            };
+            var opts = $.extend({},defaults,scope.autoPara);
+            // console.log(opts);
+            elm.bind("paste cut keydown keyup focus blur",function(){
+                var height,style=this.style;
+                this.style.height =  opts.minHeight + 'px';
+                if (this.scrollHeight > opts.minHeight) {
+                    if (opts.maxHeight && this.scrollHeight > opts.maxHeight) {
+                        height = opts.maxHeight;
+                        style.overflowY = 'scroll';
+                    } else {
+                        height = this.scrollHeight;
+                        style.overflowY = 'hidden';
+                    }
+                    style.height = height  + 'px';
+                }
+            });
+        }
+    }
+}).
+directive('reply', function(){
+    return {
+        restrict: 'EA',
+        replace: true,
+        templateUrl: 'tmpl/reply.html',
+        scope: {
+            replyData: '='
+        },
+        controller: function($scope, $element, $attrs, $transclude){
+
+            // 展开问题列表
+            $scope.expand = function(index, $event){
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.replyData[index].isExpand = !$scope.replyData[index].isExpand;
+                // $scope.isExpand = !$scope.isExpand;
+            }
+            // 关闭问题列表
+            $scope.close = function($event){
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.showList = false;
+            }
+            // 显示问题列表
+            $scope.show = function($event){
+                $event.preventDefault();
+                $event.stopPropagation();
+                $scope.showList = true;
+            }
+
+            $scope.stopPropagation = function($event){
+                $event.preventDefault();
+                $event.stopPropagation();
+            }
+
+        },
+        link: function(scope, elm, attrs){
+
+            angular.element(document).on('click', function(){
+                scope.showList = false;
+                // elm.find('.reply-content').hide();
+            })
+
+        }
+    }
+}).
+directive('dropdownMenu', function(){
+    return {
+        restrict: 'EA',
+        replace: true,
+        templateUrl: 'tmpl/dropdownMenu.html',
+        scope: {
+          dropdownData: '=',
+          dropdownCallBack: '='
+        },
+        controller: function($scope, $element, $attrs, $transclude){
+            // console.log($scope);
+            $scope.showMenu = function(undefined,$event){
+                $event.preventDefault();
+                $event.stopPropagation();
+                angular.element('.dropdown-menu').hide();
+                $element.find('ul').show();
+            }
+            $scope.action = function(item){
+                dropdownCallBack(item);
+            }
+        },
+        link: function(scope, elm, attrs){
+            angular.element(document).on("click",function(){
+                elm.find('ul').hide();
+            })
+        }
+    }
+}).
+directive('showmsgdemo', [
+    function() {
+      return {
+        restrict: 'EA',
+        replace: true,
+        templateUrl: 'showmsg.html'
+      }
+    }
 ]).
 directive('showmsg', [
-
   function() {
-    return {
-      restrict: 'EA',
-      replace: true,
-      templateUrl: 'tmpl/a.html'
-    }
+      return {
+        restrict: 'EA',
+        replace: true,
+        templateUrl: 'tmpl/a.html'
+      }
   }
 ]).
 directive('crmAdd', ['$window', '$compile',
@@ -46,21 +168,6 @@ directive('crmAdd', ['$window', '$compile',
     }
   }
 ]).
-directive('whenActive', function($location) {
-  return {
-    scope: true,
-    link: function(scope, element, attrs) {
-      scope.$on('$routeChangeSuccess', function() {
-        var cur = "#" + $location.path();
-        if (cur == element.attr('href')) {
-          element.addClass('active');
-        } else {
-          element.removeClass('active');
-        }
-      });
-    }
-  }
-}).
 directive('getter', function($parse) {
   var link = function($scope, $element, $attrs, $ctrl) {
     var func = $parse($attrs['getter']);
@@ -167,85 +274,6 @@ directive('expander', function() {
       }
     };
   })
-  .directive('pageBlock', [
-    function() {
-      return {
-        restrict: 'E',
-        replace: true,
-        templateUrl: 'tmpl/pageinfo.html',
-        scope: {
-          pageDatas: '=',
-          pageCallback: '='
-        },
-        controller: function($scope, $element, $attrs, $transclude) {
-
-          var init = function() {
-            $scope.pages = [];
-            for (var i = 1; i <= $scope.pageDatas.count; i++) {
-              $scope.pages.push(i);
-            }
-            $scope.pagecount = $scope.pages.length;
-            $scope.curpage = 1;
-          };
-
-          var callback = function() {
-            $scope.pageCallback($scope.curpage);
-          };
-
-          init();
-
-          $scope.$watch('pageDatas', function(newval, oldval) {
-            init();
-          });
-
-          $scope.isActive = function(page) {
-            return page == $scope.curpage;
-          };
-
-          $scope.selectPage = function(page) {
-            $scope.curpage = page;
-            callback();
-          };
-
-          $scope.selectPrevious = function(page) {
-            if ($scope.curpage == 1) return;
-            $scope.curpage = $scope.curpage - 1;
-            if ($scope.curpage <= 0) {
-              $scope.curpage = 1;
-            }
-            callback();
-          };
-
-          $scope.selectNext = function(page) {
-            if ($scope.curpage == $scope.pagecount) return;
-            $scope.curpage = $scope.curpage + 1;
-            $scope.curpage = $scope.curpage > $scope.pagecount ? $scope.pagecount : $scope.curpage;
-            callback();
-          };
-
-          // 检查是否可以上一页
-          $scope.noPrevious = function() {
-            if ($scope.curpage == 1) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-
-           // 检查是否可以下一页
-          $scope.noNext = function() {
-            if ($scope.curpage == $scope.pagecount) {
-              return true;
-            } else {
-              return false;
-            }
-          }
-
-        },
-        link: function(scope, element, attrs) {}
-      }
-    }
-  ])
   .directive('alert' , ['$compile',function($compile){
     return {
         restrict: 'E',
@@ -303,8 +331,6 @@ directive('expander', function() {
                           });
                       }
                   });
-
-                  // console.log(element.inheritedData());
                }
             }
         }
