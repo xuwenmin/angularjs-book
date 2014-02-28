@@ -1,5 +1,14 @@
 'use strict';
 
+/*
+  example:
+  $scope.filePara = {
+            url: 'data/upload-file.php', //上传地址
+            isImage: false,       // 是否为图片
+            isMultiple: true,    // 是否多选 
+            responseData: {}    // 接收返回成功的值
+        }
+*/
 // 上传公共服务
 smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilTools) {
     
@@ -256,7 +265,7 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
                                           '<span id="uploadProgress_' + file.index + '" class="upload_progress"></span>' +
                                         '</div>';
                                     }else{
-                                        html = html + '<div id="uploadList_'+ file.index +'" class="upload_append_list"><p><strong>' + file.name + '</strong>'+ 
+                                        html = html + '<div id="uploadList_'+ file.index +'" class="upload_append_list upload_append_file"><p><strong>' + file.name + '</strong>'+ 
                                           '<a href="javascript:" class="upload_delete" title="删除" data-index="'+ i +'">删除</a></p>' +
                                           '<span id="uploadProgress_' + file.index + '" class="upload_progress"></span>' +
                                         '</div>';

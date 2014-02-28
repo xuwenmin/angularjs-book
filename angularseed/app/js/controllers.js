@@ -194,7 +194,6 @@ controller('MyCtrl1', ["$scope", '$window', '$stateParams', '$parse', '$interval
         }
 
 
-        $scope.imgList1 = [],$scope.imgList2 = [];
         
         $scope.getAllImgList = function(){
            console.log($scope.filePara);
