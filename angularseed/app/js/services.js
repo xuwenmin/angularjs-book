@@ -136,6 +136,30 @@ constant('utilconfig', {
                     });
                     return result;
                 },
+                // 状态机对象
+                statusManger: function(status){
+                    this.curStatus = '';
+                    this.status = {};
+                    // 进入某种状态
+                    this.enter = function(k){
+                        for(var i = 0; i < status.length; i++){
+                            if(status[i] == k){
+                                this.status[k] = true;
+                            }else{
+                                this.status[status[i]] = false;
+                            }
+                        }
+                        this.curStatus = k;
+                    };
+                    // 获取当前状态
+                    this.getCur = function(){
+                        return this.curStatus;
+                    };
+                    // 确认是否为某种状态
+                    this.is= function(k){
+                        return this.curStatus == k;
+                    }
+                },
                 guid: function(){
                     function S4() 
                     { 
