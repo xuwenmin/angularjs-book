@@ -9,14 +9,19 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
     var UploadFile = function(para){
 
         this.base64Files = [];                // 保存所有图片base64编码数据
-        this.fileInput = null,                //html file控件
-        this.dragDrop = null,                 //拖拽敏感区域
-        this.upButton = null,                 //提交按钮
-        this.url = "",                        //ajax地址
-        this.fileFilter = [],                 //过滤后的文件数组
+        //this.fileInput = null,                //html file控件
+        //this.dragDrop = null,                 //拖拽敏感区域
+        //this.upButton = null,                 //提交按钮
+        this.guid = '';                       // 标识对象的唯一性
+        this.url = "";                       //ajax地址
+        this.fileFilter = [];                 //过滤后的文件数组
         this.filter = function(files) {       //选择文件组的过滤方法
-            return files;   
-        },
+            var arrFiles = [];
+            for (var i = 0, file; file = files[i]; i++) {
+                arrFiles.push(file);
+            }
+            return arrFiles;   
+        };
         this.onSelect = function() {},        //文件选择后
         this.onDelete = function() {},        //文件删除后
         this.onDragOver = function() {},      //文件拖拽到敏感区域时
@@ -27,11 +32,13 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
         this.onComplete = function() {},      //文件全部上传完毕时
 
         para && $.extend(this, para);
-        console.log(this);
 
     };
 
     UploadFile.prototype = {
+        getRoot: function(){
+            return angular.element('[data-guid=' + this.guid + ']');
+        },
         //文件拖放
         funDragHover: function(e) {
             e.stopPropagation();
@@ -56,7 +63,7 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
         funDealFiles: function() {
             for (var i = 0, file; file = this.fileFilter[i]; i++) {
                 //增加唯一索引值
-                file.index = i;
+                file.index = UtilTools.guid();
             }
             //执行选择回调
             this.onSelect(this.fileFilter);
@@ -67,6 +74,11 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
         funDeleteFile: function(fileDelete) {
             var fileName = fileDelete.name;
             var arrFile = [];
+            this.base64Files = _.filter(this.base64Files, function(v){
+                if(v.name != fileName){
+                    return v;
+                }
+            });
             for (var i = 0, file; file = this.fileFilter[i]; i++) {
                 if (file != fileDelete) {
                     arrFile.push(file);
@@ -75,17 +87,13 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
                 }
             }
             this.fileFilter = arrFile;
-            this.base64Files = _.filter(this.base64Files, function(v){
-                if(v.name != fileName){
-                    return v;
-                }
-            });
             return this;
         },
 
         funDeleteFileAll: function(){
             for(var i = 0;i<this.fileFilter.length;i++){
-                 this.onDelete({ index: i});  
+                 // console.log(this.fileFilter[i].index);
+                 this.onDelete({ index: this.fileFilter[i].index});  
             }
             this.fileFilter = [];
             this.base64Files = [];
@@ -124,7 +132,6 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
                                 }
                             }
                         };
-            
                         // 开始上传
                         xhr.open("POST", self.url, true);
                         var formData = new FormData(); 
@@ -172,45 +179,168 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
                 formData.append('fileData', JSON.stringify(this.base64Files));
                 xhr.send(formData);
             }
-            
         },
         init: function() {
             var self = this;
-            
-            if (this.dragDrop) {
-                this.dragDrop.addEventListener("dragover", function(e) { self.funDragHover(e); }, false);
-                this.dragDrop.addEventListener("dragleave", function(e) { self.funDragHover(e); }, false);
-                this.dragDrop.addEventListener("drop", function(e) { self.funGetFiles(e); }, false);
-            }
-            
-            //文件选择控件选择
-            if (this.fileInput) {
-                this.fileInput.addEventListener("change", function(e) { self.funGetFiles(e); }, false); 
-            }
-            
-            //上传按钮提交
-            if (this.upButton) {
-                this.upButton.addEventListener("click", function(e) { self.funUploadFileAll(e); }, false); 
-            } 
+            self.getRoot().delegate('.c_fileImage', 'change', function(e){
+                self.funGetFiles(e);
+            });
+
+            self.getRoot().delegate('.c_fileSubmit', 'click', function(e){
+                if(self.isImage){
+                    self.funUploadFileAll(e);
+                }else{
+                    self.funUploadFile(e);
+                } 
+            });
+            self.getRoot().delegate('.c_fileDragArea', 'dragover', function(e){
+                self.funDragHover(e);
+            });
+            self.getRoot().delegate('.c_fileDragArea', 'dragleave', function(e){
+                self.funDragHover(e);
+            });
+            self.getRoot().find('.c_fileDragArea').length && self.getRoot().find('.c_fileDragArea')[0].addEventListener('drop', function(e){
+                console.log(e);
+                self.funGetFiles(e);
+            });
         }
     };
 
-    return UploadFile;
+    // 返回创建上传类的方法
+    return {
+        create: function(para){
+            return new UploadFile(para);
+        },
+        comitUpload: function(){
+            $('.c_fileSubmit').each(function(){
+                if($(this).is(':visible')){
+                    $(this).trigger('click');
+                };
+            });
+        }
+    };
 
 }])
-.directive('uploadFile',['uploadService','UtilTools', function(uploadService, UtilTools){
+.directive('uploadFile',['uploadService','UtilTools', '$timeout',  function(uploadService, UtilTools, $timeout){
     return {
        restrict: 'EA',
        replace: true,
+       scope:{
+           filePara: '=filePara'
+       },
        templateUrl: 'tmpl/upload.html',
        link:function(scope,element,attrs,ctrl){
+
+            var guid = UtilTools.guid();
+            scope.guid = guid;  
+            console.log(scope);
             var _ = UtilTools._; // underscore
+            var noop = function(){};
             var params = {
-                fileInput: $("#fileImage").get(0),
-                dragDrop: $("#fileDragArea").get(0),
-                upButton: $("#fileSubmit").get(0),
-                url: 'data/upload.php',
-                filter: function(files) {
+                isImage: scope.filePara.isImage,
+                guid: guid,
+                url: scope.filePara.url,
+                onSelect: function(files) {
+                      var self = this;
+                      var html = '', i = 0;
+                      self.getRoot().find(".c_filePreview").html('<div class="upload_loading"></div>');
+                      var funAppendImage = function() {
+                            var file = files[i];
+                            if (file) {
+                                var reader = new FileReader();
+                                reader.onload = function(e) {
+                                    if(scope.filePara.isImage){
+                                        html = html + '<div id="uploadList_'+ file.index +'" class="upload_append_list"><p><strong>' + file.name + '</strong>'+ 
+                                          '<a href="javascript:" class="upload_delete" title="删除" data-index="'+ i +'">删除</a>' +
+                                          '<img id="uploadImage_' + file.index + '" src="' + e.target.result + '" class="upload_image" /></p>'+ 
+                                          '<span id="uploadProgress_' + file.index + '" class="upload_progress"></span>' +
+                                        '</div>';
+                                    }else{
+                                        html = html + '<div id="uploadList_'+ file.index +'" class="upload_append_list"><p><strong>' + file.name + '</strong>'+ 
+                                          '<a href="javascript:" class="upload_delete" title="删除" data-index="'+ i +'">删除</a></p>' +
+                                          '<span id="uploadProgress_' + file.index + '" class="upload_progress"></span>' +
+                                        '</div>';
+                                    }
+                                    console.log(html);
+                                    if(_.filter(self.base64Files, function(v){
+                                        return v['name'] != file.name;
+                                    })){
+                                        var obj = {};
+                                        obj['name'] = file.name;
+                                        obj['type'] = file.type;
+                                        obj['size'] = file.size;
+                                        obj['info'] = e.target.result;
+                                        self.base64Files.push(angular.copy(obj));
+                                    }
+                                    i++;
+                                    funAppendImage();
+                                }
+                                if(scope.filePara.isImage){
+                                    reader.readAsDataURL(file);
+                                }else{
+                                    console.log(file);
+                                    reader.readAsBinaryString(file.slice(0));
+                                }
+                            } else {
+                                self.getRoot().find(".c_filePreview").html(html).show();
+                                if (html) {
+                                    //删除方法
+                                    self.getRoot().find(".upload_delete").click(function() {
+                                        self.funDeleteFile(files[parseInt($(this).attr("data-index"))]);
+                                        return false; 
+                                    });
+                                    //提交按钮显示
+                                    self.getRoot().find(".c_fileSubmit").show();  
+                                  } else {
+                                    //提交按钮隐藏
+                                    self.getRoot().find(".c_fileSubmit").hide();  
+                                }
+                            }
+                      };
+                      funAppendImage();   
+                },
+                onDelete: function(file) {
+                    $("#uploadList_" + file.index).remove();
+                    // console.log(this.base64Files);
+                    if(!this.base64Files.length){
+                        this.getRoot().find(".c_fileSubmit").hide();
+                        this.getRoot().find(".c_fileImage").val("");
+                        this.getRoot().find(".c_filePreview").hide();
+                    }
+                },
+                onDragOver: function() {
+                    $(this).addClass("upload_drag_hover");
+                },
+                onDragLeave: function() {
+                    $(this).removeClass("upload_drag_hover");
+                },
+                onProgress: function(file, loaded, total) {
+                    var eleProgress = $("#uploadProgress_" + file.index), percent = (loaded / total * 100).toFixed(2) + '%';
+                    eleProgress.show().html(percent);
+                },
+                onSuccess: function(file, response) {
+                    this.getRoot().find(".c_uploadInf").empty().show();
+                    this.getRoot().find(".c_uploadInf").append("<p>上传成功，图片地址是：" + response + "</p>");
+                    scope.$apply(function(){
+                        scope.filePara.responseData.data = scope.filePara.responseData.data || [] ;
+                        console.log(response);
+                        scope.filePara.responseData.data.push(angular.isString(response) ? JSON.parse(response) : response);
+                        console.log(scope.filePara.responseData);
+                    });
+                },
+                onFailure: function(file) {
+                    this.getRoot().find(".c_uploadInf").append("<p>图片" + file.name + "上传失败！</p>");  
+                    $("#uploadImage_" + file.index).css("opacity", 0.2);
+                },
+                onComplete: function() {
+                    //提交按钮隐藏
+                    this.getRoot().find(".c_fileSubmit").hide();
+                    this.getRoot().find(".c_fileImage").val("");
+                    this.getRoot().find(".c_uploadInf").append("<p>当前图片全部上传完毕，可继续添加上传。</p>");
+                }
+            };
+            if (scope.filePara.isImage){
+                params.filter = function(files) {
                       var arrFiles = [];
                       for (var i = 0, file; file = files[i]; i++) {
                         if (file.type.indexOf("image") == 0) {
@@ -224,86 +354,13 @@ smartUI.factory('uploadService', ['$http', 'UtilTools',  function($http, UtilToo
                         }
                       }
                       return arrFiles;
-                },
-                onSelect: function(files) {
-                      var self = this;
-                      var html = '', i = 0;
-                      $("#preview").html('<div class="upload_loading"></div>');
-                      var funAppendImage = function() {
-                        var file = files[i];
-                        if (file) {
-                          var reader = new FileReader();
-                          reader.onload = function(e) {
-                            console.log(e.target.result);
-                            html = html + '<div id="uploadList_'+ i +'" class="upload_append_list"><p><strong>' + file.name + '</strong>'+ 
-                              '<a href="javascript:" class="upload_delete" title="删除" data-index="'+ i +'">删除</a><br />' +
-                              '<img id="uploadImage_' + i + '" src="' + e.target.result + '" class="upload_image" /></p>'+ 
-                              '<span id="uploadProgress_' + i + '" class="upload_progress"></span>' +
-                            '</div>';
-                            if(_.filter(self.base64Files, function(v){
-                                return v['name'] != file.name;
-                            })){
-                                var obj = {};
-                                obj['name'] = file.name;
-                                obj['type'] = file.type;
-                                obj['size'] = file.size;
-                                obj['info'] = e.target.result;
-                                self.base64Files.push(angular.copy(obj));
-                            }
-                            i++;
-                            funAppendImage();
-                          }
-                          reader.readAsDataURL(file);
-                        } else {
-                          $("#preview").html(html);
-                          if (html) {
-                            //删除方法
-                            $(".upload_delete").click(function() {
-                                self.funDeleteFile(files[parseInt($(this).attr("data-index"))]);
-                                return false; 
-                            });
-                            //提交按钮显示
-                            $("#fileSubmit").show();  
-                          } else {
-                            //提交按钮隐藏
-                            $("#fileSubmit").hide();  
-                          }
-                        }
-                      };
-                      funAppendImage();   
-                },
-                onDelete: function(file) {
-                    $("#uploadList_" + file.index).fadeOut();
-                },
-                onDragOver: function() {
-                    $(this).addClass("upload_drag_hover");
-                },
-                onDragLeave: function() {
-                    $(this).removeClass("upload_drag_hover");
-                },
-                onProgress: function(file, loaded, total) {
-                    var eleProgress = $("#uploadProgress_" + file.index), percent = (loaded / total * 100).toFixed(2) + '%';
-                    eleProgress.show().html(percent);
-                },
-                onSuccess: function(file, response) {
-                    $("#uploadInf").append("<p>上传成功，图片地址是：" + response + "</p>");
-                },
-                onFailure: function(file) {
-                    $("#uploadInf").append("<p>图片" + file.name + "上传失败！</p>");  
-                    $("#uploadImage_" + file.index).css("opacity", 0.2);
-                },
-                onComplete: function() {
-                      //提交按钮隐藏
-                      $("#fileSubmit").hide();
-                      //file控件value置空
-                      $("#fileImage").val("");
-                      $("#uploadInf").append("<p>当前图片全部上传完毕，可继续添加上传。</p>");
-                }
-            };
-
-            var uploadObj = new uploadService(params);
-            uploadObj.init();
-
+                };
+            }
+            $timeout(function(){
+                var uploadObj = uploadService.create(params);
+                uploadObj.init();
+                console.log(uploadObj);
+            }, 0);
 
        }
     }

@@ -182,8 +182,8 @@ controller('MyCtrl1', ["$scope", '$window', '$stateParams', '$parse', '$interval
 
   }
 ])
-  .controller('MyCtrl2', ['$scope', '$q', '$timeout', '$location', '$interpolate', '$sce', '$exceptionHandler',
-    function($scope, $q, $timeout, $location, $interpolate, $sce, $exceptionHandler) {
+  .controller('MyCtrl2', ['$scope', '$q', '$timeout', '$location', '$interpolate', '$sce', '$exceptionHandler', 'uploadService', 
+    function($scope, $q, $timeout, $location, $interpolate, $sce, $exceptionHandler, uploadService) {
 
         $scope.showVal = 1;
         $scope.keydownFn = function(event){
@@ -193,7 +193,23 @@ controller('MyCtrl1', ["$scope", '$window', '$stateParams', '$parse', '$interval
              console.log($scope.fileData);
         }
 
+
+        $scope.imgList1 = [],$scope.imgList2 = [];
         
+        $scope.getAllImgList = function(){
+           console.log($scope.filePara);
+        }
+
+        $scope.filePara = {
+            url: 'data/upload-file.php', //上传地址
+            isImage: false,       // 是否为图片
+            isMultiple: true,    // 是否多选 
+            responseData: {}    // 接收返回成功的值
+        }
+
+
+
+
 
     }
   ]);

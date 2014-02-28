@@ -1,29 +1,9 @@
-<p ng-init="twoName = 1 ">hello world</p>
-{{twoName}}
-<input type="text" ng-model="twoName" ng-keydown="keydownFn($event)">
 
-<p>
-    <button class="btn btn-success btn-sm" ng-click="showVal=1">showVal1</button>
-    <button class="btn btn-success btn-sm" ng-click="showVal=2">showVal2</button>
-    <button class="btn btn-success btn-sm" ng-click="showVal=3">showVal3</button>
-    <button class="btn btn-success btn-sm" ng-click="showVal=4">showVal4</button>
-</p>
-<p ng-if="showVal == 1">
-    this is show showval var is 1.
-</p>
 
-<p ng-if="showVal == 2">
-    this is show showval var is 2.
-</p>
+<h2>上传例子1</h2>
+<h4 ng-bind="imgList1"></h4>
+<div upload-file file-para="filePara" ></div>
 
-<p ng-if="showVal == 3">
-    this is show showval var is 3.
-</p>
 
-<p ng-if="showVal == 4">
-    this is show showval var is 4.
-</p>
-<!-- <form id="uploadForm" action="data/upload.php" method="post" enctype="multipart/form-data"> -->
-    <div upload-file ></div>
-<!-- </form> -->
+<button class="btn btn-success" ng-click="getAllImgList()">提交</button>
 

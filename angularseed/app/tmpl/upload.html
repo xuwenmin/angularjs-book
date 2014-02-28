@@ -1,13 +1,15 @@
-<div class="upload_box">
+<div class="upload_box" data-guid="{{guid}}">
         <div class="upload_main">
             <div class="upload_choose">
-                <input id="fileImage" type="file" size="30" name="fileImage" multiple />
-                <span id="fileDragArea" class="upload_drag_area">或者将图片拖到此处</span>
+                <input ng-if="filePara.isMultiple" multiple  class="c_fileImage upload_file_image" type="file" size="30"   />
+                <input ng-if="!filePara.isMultiple"  class="c_fileImage upload_file_image" type="file" size="30"   />
+                <span ng-if="filePara.isImage"  class="upload_drag_area c_fileDragArea">或者将图片拖到此处</span>
             </div>
-            <div id="preview" class="upload_preview"></div>
+            <div class="upload_preview c_filePreview"></div>
         </div>
         <div class="upload_submit">
-            <button type="button" id="fileSubmit" class="upload_submit_btn btn btn-success">确认上传图片</button>
+            <button ng-if="filePara.isImage"  type="button" class="upload_submit_btn btn btn-success c_fileSubmit">上传图片</button>
+            <button ng-if="!filePara.isImage"  type="button" class="upload_submit_btn btn btn-success c_fileSubmit">上传文件</button>
         </div>
-        <div id="uploadInf" class="upload_inf"></div>
+        <div  class="upload_inf c_uploadInf"></div>
 </div>

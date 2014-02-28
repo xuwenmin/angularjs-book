@@ -15,11 +15,13 @@ $targetFolder = '/uploads';
 $arg = json_decode($_POST['fileData'],true);
 /*var_dump($arg);
 exit;*/
+$result = array();
 for($i =0;$i<count($arg);$i++){
     $s = base64_decode(str_replace('data:'.$arg[$i]['type'].';base64,', '', $arg[$i]['info']));
     file_put_contents('uploads/'.$arg[$i]['name'], $s);
+    $result[$i] = $arg[$i]['name'];
 }
-echo 'success';
+echo json_encode($result);
 /*if (!empty($_FILES)) {
         $tempFile = $_FILES['fileData']['tmp_name'];
         $targetPath = $_SERVER['DOCUMENT_ROOT'] . $targetFolder;
