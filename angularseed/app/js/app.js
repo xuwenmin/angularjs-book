@@ -6,6 +6,7 @@
 
 
 var demoApp = angular.module('myApp', [
+  'ngAnimate',
   'ui.router',
   'ui.event',
   'ui.format',

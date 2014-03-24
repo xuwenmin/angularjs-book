@@ -4,8 +4,16 @@
   margin: 0;padding: 0;
 }
 ul{
+    margin: 0;padding: 0;
     list-style: none;
 }
+li{
+  list-style: none;
+}
+a{
+  text-decoration: none;
+}
+
 input:focus, textarea:focus{
     border: 1px solid #21a9f8 !important;
     outline: 0;
@@ -234,3 +242,77 @@ background-color: #78FA89;
     white-space: pre-wrap;
     word-wrap: break-word; 
 }
+
+
+/*页签样式*/
+
+.tab-crm{
+}
+.tab-crm li{
+    float: left;
+    margin-bottom: -1px;
+}
+.tab-crm li a{
+    display: block;
+    padding: 10px 20px;
+    background-color: #fff;
+    font-weight: bolder;
+    color:#ccc;
+}
+.tab-crm li.active a{
+    background-color: #F6F6F6;
+    color: #66B856;
+    border:1px solid #ccc;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-color:#F6F6F6;
+}
+.tab-content-crm{
+    background-color: #F6F6F6;
+    min-height: 300px;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    padding: 20px;
+}
+.tab-content-crm .tab-content-container{
+    
+}
+.tab-content-crm .tab-content-container .character{
+    min-height: 200px;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    padding: 20px;
+}
+.tab-content-crm .tab-content-container .character .textarea{
+    width: 100%;
+    height: 180px;
+    border-radius: 5px;
+    padding-left: 5px;
+    border:1px solid #ccc;
+    overflow-y:hidden;
+    resize: none;
+    white-space: pre-wrap;
+    word-wrap: break-word; 
+}
+.tab-content-crm .tab-content-container .controller{
+    margin-top: 10px;
+}
+
+
+.text-container{
+    /*width: 200px;*/
+    /*overflow: hidden;*/
+}
+.text-container span{
+    display: block;
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+
+
+

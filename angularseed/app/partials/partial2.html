@@ -1,9 +1,30 @@
 
+<ul class="tab-crm clearfix">
+     <li class="active">
+          <a >文字</a>
+     </li>
+     <li >
+          <a >游戏</a>
+     </li>
+     <li >
+          <a >语音</a>
+     </li>
+     <li >
+          <a >图书</a>
+     </li>
+</ul>
+<div class="tab-content-crm">
+  <div class="tab-content-container">
+      <div class="character">
+           <p>还可以输入130个字</p>
+           <textarea class="textarea" ng-model="attentionReply"></textarea>
+      </div>
+      <div class="controller">
+          <button class="btn btn-success" ng-click="saveAttentionReply()">保存</button>
+          <button class="btn btn-default" ng-click="deleteAttentionReply()">删除</button>
+      </div>
+  </div>
+</div>
 
-<h2>上传例子1</h2>
-<h4 ng-bind="imgList1"></h4>
-<div upload-file file-para="filePara" ></div>
 
-
-<button class="btn btn-success" ng-click="getAllImgList()">提交</button>
 

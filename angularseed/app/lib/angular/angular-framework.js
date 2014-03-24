@@ -422,6 +422,7 @@
 			ngMinErr = minErr("ng");
 		return ensure(ensure(window, "angular", Object), "module", function() {
 			var modules = {};
+
 			return function(name, requires, configFn) {
 				var assertNotHasOwnProperty = function(name, context) {
 					if ("hasOwnProperty" === name) throw ngMinErr("badname", "hasOwnProperty is not a valid {0} name", context)
@@ -797,7 +798,7 @@
 						throw isArray(module) && (module = module[module.length - 1]), e.message && e.stack && -1 == e.stack.indexOf(e.message) && (e = e.message + "\n" + e.stack), $injectorMinErr("modulerr", "Failed to instantiate module {0} due to:\n{1}", module, e.stack || e.message || e)
 					}
 				}
-			}), runBlocks
+			}),runBlocks
 		}
 
 		function createInternalInjector(cache, factory) {

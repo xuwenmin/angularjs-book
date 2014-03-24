@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title>编辑器测试</title>
+    <meta charset='utf-8'>
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="umeditor/dist/utf8-php/themes/default/css/umeditor.css">
+    <!-- 引用jquery -->
+    <script src="umeditor/dist/utf8-php/third-party/jquery.min.js"></script>
+    <!-- 配置文件 -->
+    <script type="text/javascript" src="umeditor/dist/utf8-php/umeditor.config.js"></script>
+    <!-- 编辑器源码文件 -->
+    <script type="text/javascript" src="umeditor/dist/utf8-php/umeditor.js"></script>
+    <!-- 语言包文件 -->
+    <script type="text/javascript" src="umeditor/dist/utf8-php/lang/zh-cn/zh-cn.js"></script>
+    <!-- 实例化编辑器代码 -->
+    <script type="text/javascript">
+        /*{
+            toolbar: ['undo redo | bold italic underline']
+        }*/
+        $(function(){
+
+                window.um = UM.getEditor('container');
+                window.um.focus();
+        });
+    </script>
+</head>
+<body>
+    <!-- 加载编辑器的容器 -->
+    <script id="container" name="content" type="text/plain" style="width:800px;height:500px;">
+    </script>
+
+    <br>
+<!--     <button id="but1">初始化编辑器</button>
+<button id="but2">获取焦点</button> -->
+</body>
+</html>
+        
